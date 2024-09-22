@@ -6,3 +6,10 @@ it`s a beta test. i started learn bspwm ~1day.
 https://github.com/Zproger/bspwm-dotfiles/tree/main
 
 Thanks , i looked you`re work, and this so fantastic,and i started my project with bspwm
+
+[HOW IT WORK]
+cd /Build
+python installer.py
+
+sudo reboot
+startx

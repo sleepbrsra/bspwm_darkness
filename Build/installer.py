@@ -58,6 +58,12 @@ def main():
         shutil.rmtree(wallpapers_dest)  # Удаляем старую папку, если она существует
     shutil.copytree(wallpapers_src, wallpapers_dest)
 
+    # Копирование .xinitrc в домашнюю директорию
+    xinitrc_src = os.path.join("..",".xinitrc")
+    xinitrc_dest = os.path.expanduser("~/.xinitrc")
+    shutil.copy(xinitrc_src, xinitrc_dest)
+
+
     print("Установка и настройка завершены. Вы можете запустить X-сервер с помощью 'startx'.")
 
 
@@ -100,6 +106,15 @@ def delete_bspwm_setup():
             print(f"Удалена директория: {config}")
         else:
             print(f"Директория {config} не найдена.")
+
+    # Удаление .xinitrc из домашней директории
+    xinitrc_path = os.path.expanduser("~/.xinitrc")
+    if os.path.exists(xinitrc_path):
+        run_command(f"rm -f {xinitrc_path}")
+        print("Удален файл: ~/.xinitrc")
+    else:
+        print("Файл ~/.xinitrc не найден.")
+
     
     # Удаление скрипта из ~/bin/
     script_path = os.path.expanduser("~/bin/random_wallpaper.sh")
