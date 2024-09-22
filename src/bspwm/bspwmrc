@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Устанавливаем рабочие пространства
+bspc monitor -d I II III IV V VI VII VIII IX X
+
+# Запуск необходимых программ
+feh --bg-scale /home/dolphin/Documents/images/wallpaper/4k/1289660.jpg &  # Фоновые обои
+picom &  # Композитор для прозрачности
+polybar &  # Панель Polybar
+
+sxhkd &
+
+xrandr --output HDMI-1 --auto --primary
+
+# Настройки bspwm
+bspc config border_width 2
+bspc config window_gap 10
+bspc config border_color "#FF0000"
+bspc rule -a Gimp state=floating
