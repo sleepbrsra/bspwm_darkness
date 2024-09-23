@@ -157,3 +157,6 @@ super + F6
 # Увеличить яркость (FN + F7)
 super + F7
    brightnessctl set +10%
+# ctrl + A 
+super + {_,shift + }a
+  bspc desktop -{f,F}
