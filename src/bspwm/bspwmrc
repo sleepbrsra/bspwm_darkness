@@ -7,7 +7,7 @@ bspc monitor -d I II III IV V VI VII VIII IX X
 feh --bg-scale /home/dolphin/Documents/images/wallpaper/4k/1289660.jpg &  # Фоновые обои
 picom &  # Композитор для прозрачности
 polybar &  # Панель Polybar
-
+flameshot & # screen
 sxhkd &
 
 xrandr --output HDMI-1 --auto --primary
