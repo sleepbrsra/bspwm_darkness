@@ -14,4 +14,5 @@ $ cd /Build
 $ python installer.py  
 
 $ sudo reboot  
-$ startx  ```
+$ startx
+```
