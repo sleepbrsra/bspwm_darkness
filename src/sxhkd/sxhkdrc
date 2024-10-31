@@ -163,8 +163,14 @@ super + {_,shift + }a
 # ctrl + A (rus layout)
 super + {_,shift + }ф
   bspc desktop -{f,F}
-
-
-  # window manager
-  super + button1
+# manager window
+super + button1
     bspc node -t ~floating; xdotool mousemove_relative --sync 10 10
+
+# Начало изменения размера окна с правой кнопкой мыши
+super + button2
+    bspc node -g resize
+
+# Изменение размера окна
+super + button2 + move
+    xdo resize $(xdotool getactivewindow) $@; bspc node -g resize
