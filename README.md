@@ -16,3 +16,4 @@ $ python installer.py
 $ sudo reboot  
 $ startx
 ```
+qwe
