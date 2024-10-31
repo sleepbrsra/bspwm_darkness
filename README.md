@@ -10,8 +10,8 @@ Thanks , i looked you`re work, and this so fantastic,and i started my project wi
 
 **#[HOW IT WORK]**  
 ```bash
-$cd /Build  
-$python installer.py  
+$ cd /Build  
+$ python installer.py  
 
-$sudo reboot  
-$startx  ```
+$ sudo reboot  
+$ startx  ```
