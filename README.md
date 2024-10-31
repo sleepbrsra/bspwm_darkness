@@ -9,8 +9,9 @@ https://github.com/Zproger/bspwm-dotfiles/tree/main
 Thanks , i looked you`re work, and this so fantastic,and i started my project with bspwm  
 
 **#[HOW IT WORK]**  
+```bash
 -cd /Build  
 -python installer.py  
 
 -sudo reboot  
--startx  
+-startx  ```markdown
