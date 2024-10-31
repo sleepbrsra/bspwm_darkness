@@ -1,4 +1,4 @@
-﻿![bspwm_darkness] (/src/banner/banner.jpg)
+﻿![bspwm_darkness](/src/banner/banner.jpg)
 Hello, it`s my config with bspwm
 it`s a beta test. i started learn bspwm ~1day. 
 
