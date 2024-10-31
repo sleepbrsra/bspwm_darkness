@@ -160,3 +160,11 @@ super + F7
 # ctrl + A 
 super + {_,shift + }a
   bspc desktop -{f,F}
+# ctrl + A (rus layout)
+super + {_,shift + }ф
+  bspc desktop -{f,F}
+
+
+  # window manager
+  super + button1
+    bspc node -t ~floating; xdotool mousemove_relative --sync 10 10

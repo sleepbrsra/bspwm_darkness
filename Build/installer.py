@@ -11,7 +11,7 @@ def print_ascii():
              ││├─┤├┬┘├┴┐│││├┤ └─┐└─┐
             ─┴┘┴ ┴┴└─┴ ┴┘└┘└─┘└─┘└─┘
                     ♡𝔡3𝔯𝔯𝔨1𝔞♡
-          vers. 1.1
+          vers 1.3
     """)
 
 def print_help():
@@ -22,6 +22,7 @@ def print_help():
     print(Fore.RED + "         ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺")
     print("")
 
+# -------------------
 def run_command(command):
     try:
         subprocess.run(command, shell=True, check=True)
@@ -33,6 +34,8 @@ def copy_configs(src, dest):
     if os.path.exists(dest):
         shutil.rmtree(dest)  # Удаляем старую директорию, если она существует
     shutil.copytree(src, dest)  # Копируем новую конфигурацию
+# -----------------
+
 
 def main():
     run_command("sudo pacman -Syu --noconfirm")
@@ -80,7 +83,7 @@ def warning():
         
 
 
-
+# ------------- DELETE --------------
 def delete_configurate():
     choice = input("[WARNING!!!] Вы точно желаете удалить конфигурацию darkness? [y/n] ").strip().lower()
     if choice == "y":
@@ -126,7 +129,7 @@ def delete_bspwm_setup():
     
     print("Полная очистка конфигураций и пакетов завершена.")
 
-
+# ---------- DELETE --------------
 
 
 
