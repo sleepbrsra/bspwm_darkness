@@ -66,7 +66,18 @@ def main():
     xinitrc_dest = os.path.expanduser("~/.xinitrc")
     shutil.copy(xinitrc_src, xinitrc_dest)
 
+    # Install fish
+    run_command("curl -L https://get.oh-my.fish | fish")
+    run_command("omf install bobthefish")
 
+    # install themes
+    run_command("set -g fish_color_dir blue")
+    run_command("set -g fish_color_file normal")
+    run_command("set -g fish_color_symlink green")
+    run_command("set -g fish_color_comment purple")
+    run_command("set -g fish_color_search_match yellow")
+    
+    # Finish
     print("Установка и настройка завершены. Вы можете запустить X-сервер с помощью 'startx'.")
 
 
