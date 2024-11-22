@@ -174,3 +174,7 @@ super + button2
 # Изменение размера окна
 super + button2 + move
     xdo resize $(xdotool getactivewindow) $@; bspc node -g resize
+
+# Перетаскивание окна с Ctrl + ЛКМ (Button1)
+ctrl + button1
+    bspc node -v

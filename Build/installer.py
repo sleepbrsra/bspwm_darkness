@@ -1,10 +1,53 @@
 import os
 import shutil
 import subprocess
+from enum import Enum
 from colorama import init, Fore
 
 init(autoreset=True)
 
+# Константы для путей и пакетов
+CONFIG_PATHS = [
+    "~/.config/bspwm",
+    "~/.config/sxhkd",
+    "~/.config/polybar",
+    "~/.config/wallpapers",
+]
+PACKAGES = ["bspwm", "sxhkd", "dmenu", "feh", "picom", "polybar"]
+BIN_SCRIPT = "~/bin/random_wallpaper.sh"
+XINITRC = "~/.xinitrc"
+
+
+class MenuChoice(Enum):
+    INSTALL = "1"
+    DELETE = "2"
+    EXIT = "3"
+
+
+# --- Утилиты ---
+def run_command(command):
+    """Выполняет shell-команду с проверкой ошибок."""
+    try:
+        subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(Fore.RED + f"Ошибка при выполнении команды '{command}': {e}")
+        exit(1)
+
+
+def safe_remove(path):
+    """Безопасно удаляет файл или директорию."""
+    expanded_path = os.path.expanduser(path)
+    if os.path.exists(expanded_path):
+        if os.path.isdir(expanded_path):
+            shutil.rmtree(expanded_path)
+        else:
+            os.remove(expanded_path)
+        print(Fore.YELLOW + f"Удалено: {expanded_path}")
+    else:
+        print(Fore.CYAN + f"Не найдено: {expanded_path}")
+
+
+# --- Интерфейс ---
 def print_ascii():
     print(Fore.RED + """
             ┌┬┐┌─┐┬─┐┬┌─┌┐┌┌─┐┌─┐┌─┐
@@ -14,148 +57,70 @@ def print_ascii():
           vers 1.3
     """)
 
+
 def print_help():
-    print(Fore.RED + "         ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯")
+    print(Fore.RED + "         ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯")
     print(Fore.RED + "        │ " + Fore.CYAN + "[1]" + Fore.RESET + " Начать Установку" + Fore.RED + "          │")
     print(Fore.RED + "        │ " + Fore.CYAN + "[2]" + Fore.RESET + " Удалить прошлые конфиги" + Fore.RED + "   │")
     print(Fore.RED + "        │ " + Fore.CYAN + "[3]" + Fore.RESET + " Выход" + Fore.RED + "                     │")
-    print(Fore.RED + "         ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺")
+    print(Fore.RED + "         ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺")
     print("")
 
-# -------------------
-def run_command(command):
-    try:
-        subprocess.run(command, shell=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Ошибка при выполнении команды '{command}': {e}")
-        exit(1)
 
-def copy_configs(src, dest):
-    if os.path.exists(dest):
-        shutil.rmtree(dest)  # Удаляем старую директорию, если она существует
-    shutil.copytree(src, dest)  # Копируем новую конфигурацию
-# -----------------
-
-
-def main():
+# --- Установка ---
+def install():
     run_command("sudo pacman -Syu --noconfirm")
-    run_command("sudo pacman -S --noconfirm bspwm sxhkd dmenu feh picom polybar")
+    run_command(f"sudo pacman -S --noconfirm {' '.join(PACKAGES)}")
 
-    # Копирование конфигураций
     home_config_dir = os.path.expanduser("~/.config")
-    copy_configs(os.path.join("..", "src", "bspwm"), os.path.join(home_config_dir, "bspwm"))
-    copy_configs(os.path.join("..", "src", "sxhkd"), os.path.join(home_config_dir, "sxhkd"))
-    copy_configs(os.path.join("..", "src", "polybar"), os.path.join(home_config_dir, "polybar"))
+    # Копирование конфигураций
+    for config in ["bspwm", "sxhkd", "polybar"]:
+        src = os.path.join("..", "src", config)
+        dest = os.path.join(home_config_dir, config)
+        shutil.copytree(src, dest, dirs_exist_ok=True)
+        print(Fore.GREEN + f"Скопирован: {dest}")
 
-    # Копирование скрипта смены обоев в ~/bin
-    bin_dir = os.path.expanduser("~/bin")
-    if not os.path.exists(bin_dir):
-        os.makedirs(bin_dir)  # Создаем директорию, если её нет
-    shutil.copy(os.path.join("..", "src", "script", "random_wallpaper.sh"), os.path.join(bin_dir, "random_wallpaper.sh"))
-    os.chmod(os.path.join(bin_dir, "random_wallpaper.sh"), 0o755)
-
-    # Копирование папки с обоями в ~/.config
+    # Копирование обоев
     wallpapers_src = os.path.join("..", "src", "wallpapers")
     wallpapers_dest = os.path.join(home_config_dir, "wallpapers")
-    if os.path.exists(wallpapers_dest):
-        shutil.rmtree(wallpapers_dest)  # Удаляем старую папку, если она существует
-    shutil.copytree(wallpapers_src, wallpapers_dest)
+    shutil.copytree(wallpapers_src, wallpapers_dest, dirs_exist_ok=True)
+    print(Fore.GREEN + f"Скопированы обои: {wallpapers_dest}")
 
-    # Копирование .xinitrc в домашнюю директорию
-    xinitrc_src = os.path.join("..",".xinitrc")
-    xinitrc_dest = os.path.expanduser("~/.xinitrc")
-    shutil.copy(xinitrc_src, xinitrc_dest)
+    # Копирование скрипта
+    bin_dir = os.path.expanduser("~/bin")
+    os.makedirs(bin_dir, exist_ok=True)
+    shutil.copy(os.path.join("..", "src", "script", "random_wallpaper.sh"), BIN_SCRIPT)
+    os.chmod(BIN_SCRIPT, 0o755)
+    print(Fore.GREEN + f"Скрипт установлен: {BIN_SCRIPT}")
 
-    # Install fish
+    # Установка fish
     run_command("curl -L https://get.oh-my.fish | fish")
     run_command("omf install bobthefish")
 
-    # install themes
-    run_command("set -g fish_color_dir blue")
-    run_command("set -g fish_color_file normal")
-    run_command("set -g fish_color_symlink green")
-    run_command("set -g fish_color_comment purple")
-    run_command("set -g fish_color_search_match yellow")
-    
-    # Finish
-    print("Установка и настройка завершены. Вы можете запустить X-сервер с помощью 'startx'.")
+
+# --- Удаление ---
+def delete():
+    for config in CONFIG_PATHS:
+        safe_remove(config)
+    safe_remove(XINITRC)
+    safe_remove(BIN_SCRIPT)
+    run_command(f"sudo pacman -Rns --noconfirm {' '.join(PACKAGES)}")
+    print(Fore.GREEN + "Удаление завершено.")
 
 
-# ///// DELETE CONFIG
-
-def warning():
-        choise2 = input("Удалить конфигурацию darkness? [y/n]:")
-        if choise2 == "y":
-            delete_configurate()
-        elif choise2 == "n":
-            exit(1)
-        else:
-            print("Неверный выбор")
-        
-
-
-# ------------- DELETE --------------
-def delete_configurate():
-    choice = input("[WARNING!!!] Вы точно желаете удалить конфигурацию darkness? [y/n] ").strip().lower()
-    if choice == "y":
-        delete_bspwm_setup()
-    elif choice == "n":
-        configs = ["~/.config/bspwm", "~/.config/sxhkd", "~/.config/polybar", "~/.config/wallpapers"]
-        for config in configs:
-            run_command(f"rm -rf {os.path.expanduser(config)}")
-    else:
-        print("Неверная команда")
-
-def delete_bspwm_setup():
-    # Удаление установленных пакетов для bspwm и сопутствующих программ
-    run_command("sudo pacman -Rns --noconfirm bspwm sxhkd dmenu feh picom polybar")
-    print("Удалены пакеты: bspwm, sxhkd, dmenu, feh, picom, polybar.")
-    
-    # Удаление конфигурационных директорий из ~/.config/
-    configs = ["~/.config/bspwm", "~/.config/sxhkd", "~/.config/polybar", "~/.config/wallpapers"]
-    for config in configs:
-        config_path = os.path.expanduser(config)
-        if os.path.exists(config_path):
-            run_command(f"rm -rf {config_path}")
-            print(f"Удалена директория: {config}")
-        else:
-            print(f"Директория {config} не найдена.")
-
-    # Удаление .xinitrc из домашней директории
-    xinitrc_path = os.path.expanduser("~/.xinitrc")
-    if os.path.exists(xinitrc_path):
-        run_command(f"rm -f {xinitrc_path}")
-        print("Удален файл: ~/.xinitrc")
-    else:
-        print("Файл ~/.xinitrc не найден.")
-
-    
-    # Удаление скрипта из ~/bin/
-    script_path = os.path.expanduser("~/bin/random_wallpaper.sh")
-    if os.path.exists(script_path):
-        run_command(f"rm -f {script_path}")
-        print("Удален скрипт: ~/bin/random_wallpaper.sh")
-    else:
-        print("Скрипт ~/bin/random_wallpaper.sh не найден.")
-    
-    print("Полная очистка конфигураций и пакетов завершена.")
-
-# ---------- DELETE --------------
-
-
-
+# --- Главная функция ---
 if __name__ == "__main__":
     run_command("clear")
-
     print_ascii()
     print_help()
-    choice = input("").strip()
-    if choice == "1":
-        main()
-    elif choice == "2":
-        delete_configurate()
-    elif choice == "3":
+
+    choice = input("*: ").strip()
+    if choice == MenuChoice.INSTALL.value:
+        install()
+    elif choice == MenuChoice.DELETE.value:
+        delete()
+    elif choice == MenuChoice.EXIT.value:
+        print(Fore.GREEN + "Выход.")
         exit(0)
     else:
-        print("Неверный выбор")
-        exit(1)
+        print(Fore.RED + "Неверный выбор.")
